@@ -20,9 +20,9 @@ final class SessionEngine: ObservableObject {
         self.cueManager = cueManager
     }
 
-    func start(routine: SessionRoutine, settings: AppSettings) {
+    func start(program: WorkoutProgram, settings: AppSettings) {
         snapshot = SessionSnapshot(
-            routine: routine,
+            program: program,
             startedAt: Date(),
             accumulatedPauseInterval: 0,
             pausedAt: nil
@@ -128,18 +128,23 @@ final class SessionEngine: ObservableObject {
 
         let effectiveNow = snapshot.pausedAt ?? now
         let elapsed = max(0, effectiveNow.timeIntervalSince(snapshot.startedAt) - snapshot.accumulatedPauseInterval)
-        let totalDuration = snapshot.routine.totalDuration
+        let totalDuration = snapshot.program.totalDuration
         let previousState = state
 
         guard elapsed < totalDuration else {
+            let finalStage = snapshot.program.stages.last ?? WorkoutProgram.default.stages[0]
             state = SessionState(
-                routine: snapshot.routine,
+                program: snapshot.program,
+                stage: finalStage,
+                currentStageIndex: snapshot.program.stages.count,
+                totalStages: snapshot.program.stages.count,
                 status: .completed,
                 phase: .relax,
+                stageRemaining: 0,
+                phaseRemaining: 0,
+                secondsRemainingInStage: 0,
                 secondsRemainingInPhase: 0,
-                phaseDuration: snapshot.routine.relaxSeconds,
-                currentRepetition: snapshot.routine.repetitions,
-                totalRepetitions: snapshot.routine.repetitions,
+                phaseDuration: finalStage.relaxSeconds,
                 elapsedSeconds: Int(totalDuration.rounded()),
                 totalDuration: Int(totalDuration.rounded())
             )
@@ -153,32 +158,50 @@ final class SessionEngine: ObservableObject {
             return
         }
 
-        let cycleDuration = TimeInterval(snapshot.routine.squeezeSeconds + snapshot.routine.relaxSeconds)
-        let cyclePosition = elapsed.truncatingRemainder(dividingBy: cycleDuration)
-        let repetitionIndex = min(snapshot.routine.repetitions, Int(elapsed / cycleDuration) + 1)
+        guard let stageResolution = resolveStage(for: elapsed, in: snapshot.program) else {
+            state = nil
+            self.snapshot = nil
+            stopTimer()
+            endBackgroundTask()
+            persistSnapshot()
+            return
+        }
+
+        let stage = stageResolution.stage
+        let stageElapsed = stageResolution.elapsedWithinStage
+        let stageRemaining = max(0, stage.totalDuration - stageElapsed)
+        let cycleDuration = TimeInterval(stage.squeezeSeconds + stage.relaxSeconds)
+        let cyclePosition = stageElapsed.truncatingRemainder(dividingBy: cycleDuration)
 
         let phase: SessionPhaseKind
         let phaseDuration: Int
         let secondsRemaining: Int
+        let phaseRemaining: TimeInterval
 
-        if cyclePosition < TimeInterval(snapshot.routine.squeezeSeconds) {
+        if cyclePosition < TimeInterval(stage.squeezeSeconds) {
             phase = .squeeze
-            phaseDuration = snapshot.routine.squeezeSeconds
-            secondsRemaining = max(0, Int(ceil(TimeInterval(snapshot.routine.squeezeSeconds) - cyclePosition)))
+            phaseDuration = stage.squeezeSeconds
+            phaseRemaining = max(0, min(TimeInterval(stage.squeezeSeconds) - cyclePosition, stageRemaining))
+            secondsRemaining = max(0, Int(ceil(phaseRemaining)))
         } else {
             phase = .relax
-            phaseDuration = snapshot.routine.relaxSeconds
-            secondsRemaining = max(0, Int(ceil(cycleDuration - cyclePosition)))
+            phaseDuration = stage.relaxSeconds
+            phaseRemaining = max(0, min(cycleDuration - cyclePosition, stageRemaining))
+            secondsRemaining = max(0, Int(ceil(phaseRemaining)))
         }
 
         let newState = SessionState(
-            routine: snapshot.routine,
+            program: snapshot.program,
+            stage: stage,
+            currentStageIndex: stageResolution.stageIndex + 1,
+            totalStages: snapshot.program.stages.count,
             status: snapshot.pausedAt == nil ? .running : .paused,
             phase: phase,
+            stageRemaining: stageRemaining,
+            phaseRemaining: phaseRemaining,
+            secondsRemainingInStage: Int(ceil(stageRemaining)),
             secondsRemainingInPhase: secondsRemaining,
             phaseDuration: phaseDuration,
-            currentRepetition: repetitionIndex,
-            totalRepetitions: snapshot.routine.repetitions,
             elapsedSeconds: Int(elapsed.rounded(.down)),
             totalDuration: Int(totalDuration.rounded())
         )
@@ -197,6 +220,20 @@ final class SessionEngine: ObservableObject {
 
     private func persistSnapshot() {
         onSnapshotChange?(snapshot)
+    }
+
+    private func resolveStage(for elapsed: TimeInterval, in program: WorkoutProgram) -> (stage: WorkoutStage, stageIndex: Int, elapsedWithinStage: TimeInterval)? {
+        var consumed: TimeInterval = 0
+
+        for (index, stage) in program.stages.enumerated() {
+            let nextBoundary = consumed + stage.totalDuration
+            if elapsed < nextBoundary {
+                return (stage, index, elapsed - consumed)
+            }
+            consumed = nextBoundary
+        }
+
+        return nil
     }
 
     private func beginBackgroundTaskIfNeeded() {

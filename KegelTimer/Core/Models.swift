@@ -30,70 +30,94 @@ enum SessionStatus: String, Codable {
     case cancelled
 }
 
-struct WorkoutPreset: Identifiable, Hashable {
+struct WorkoutStage: Identifiable, Codable, Equatable, Hashable {
     let id: String
     let name: String
     let subtitle: String
+    let totalSeconds: Int
     let squeezeSeconds: Int
     let relaxSeconds: Int
-    let repetitions: Int
-
-    var asRoutine: SessionRoutine {
-        SessionRoutine(
-            name: name,
-            squeezeSeconds: squeezeSeconds,
-            relaxSeconds: relaxSeconds,
-            repetitions: repetitions
-        )
-    }
-
-    static let defaults: [WorkoutPreset] = [
-        WorkoutPreset(
-            id: "short-holding",
-            name: "Short Holding",
-            subtitle: "Quick contractions with easy pacing",
-            squeezeSeconds: 4,
-            relaxSeconds: 6,
-            repetitions: 10
-        ),
-        WorkoutPreset(
-            id: "rest",
-            name: "Rest",
-            subtitle: "Balanced rhythm with longer release",
-            squeezeSeconds: 6,
-            relaxSeconds: 8,
-            repetitions: 12
-        ),
-        WorkoutPreset(
-            id: "trembling",
-            name: "Trembling",
-            subtitle: "Longer squeeze intervals for endurance",
-            squeezeSeconds: 8,
-            relaxSeconds: 8,
-            repetitions: 10
-        )
-    ]
-}
-
-struct SessionRoutine: Codable, Equatable {
-    let name: String
-    let squeezeSeconds: Int
-    let relaxSeconds: Int
-    let repetitions: Int
 
     var totalDuration: TimeInterval {
-        TimeInterval(repetitions * (squeezeSeconds + relaxSeconds))
+        TimeInterval(totalSeconds)
     }
+}
+
+struct WorkoutProgram: Codable, Equatable {
+    let name: String
+    let stages: [WorkoutStage]
+
+    var totalDuration: TimeInterval {
+        stages.reduce(0) { $0 + $1.totalDuration }
+    }
+
+    static let `default` = WorkoutProgram(
+        name: "Pelvic Floor Routine",
+        stages: [
+            WorkoutStage(
+                id: "hold-1",
+                name: "Hold",
+                subtitle: "Quick contractions to wake up the pattern",
+                totalSeconds: 24,
+                squeezeSeconds: 4,
+                relaxSeconds: 4
+            ),
+            WorkoutStage(
+                id: "rest-1",
+                name: "Rest",
+                subtitle: "Six seconds of full release before the next effort",
+                totalSeconds: 6,
+                squeezeSeconds: 0,
+                relaxSeconds: 6
+            ),
+            WorkoutStage(
+                id: "trembling-1",
+                name: "Trembling",
+                subtitle: "Longer squeeze intervals for endurance",
+                totalSeconds: 30,
+                squeezeSeconds: 2,
+                relaxSeconds: 2
+            ),
+            WorkoutStage(
+                id: "rest-2",
+                name: "Rest",
+                subtitle: "Six seconds of full release before the final push",
+                totalSeconds: 6,
+                squeezeSeconds: 0,
+                relaxSeconds: 6
+            ),
+            WorkoutStage(
+                id: "hold-2",
+                name: "Hold",
+                subtitle: "Return to crisp controlled contractions",
+                totalSeconds: 24,
+                squeezeSeconds: 4,
+                relaxSeconds: 4
+            ),
+            WorkoutStage(
+                id: "trembling-2",
+                name: "Trembling",
+                subtitle: "Finish with sustained effort and control",
+                totalSeconds: 30,
+                squeezeSeconds: 2,
+                relaxSeconds: 2
+            )
+        ]
+    )
 }
 
 struct SessionState: Equatable {
-    let routine: SessionRoutine
+    let program: WorkoutProgram
+    let stage: WorkoutStage
+    let currentStageIndex: Int
+    let totalStages: Int
     let status: SessionStatus
     let phase: SessionPhaseKind
+    let stageRemaining: TimeInterval
+    let phaseRemaining: TimeInterval
+    let secondsRemainingInStage: Int
     let secondsRemainingInPhase: Int
     let phaseDuration: Int
-    let currentRepetition: Int
-    let totalRepetitions: Int
     let elapsedSeconds: Int
     let totalDuration: Int
 
@@ -104,20 +128,21 @@ struct SessionState: Equatable {
 
     var phaseProgress: Double {
         guard phaseDuration > 0 else { return 0 }
-        return 1 - (Double(secondsRemainingInPhase) / Double(phaseDuration))
+        return 1 - (phaseRemaining / Double(phaseDuration))
+    }
+
+    var stageProgress: Double {
+        guard stage.totalSeconds > 0 else { return 0 }
+        return 1 - (stageRemaining / Double(stage.totalSeconds))
     }
 
     var isPaused: Bool {
         status == .paused
     }
-
-    var progressText: String {
-        "Rep \(currentRepetition) of \(totalRepetitions)"
-    }
 }
 
 struct SessionSnapshot: Codable, Equatable {
-    var routine: SessionRoutine
+    var program: WorkoutProgram
     var startedAt: Date
     var accumulatedPauseInterval: TimeInterval
     var pausedAt: Date?

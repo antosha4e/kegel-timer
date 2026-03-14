@@ -3,7 +3,6 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var appModel: AppModel
     @EnvironmentObject private var sessionEngine: SessionEngine
-    @State private var selectedPresetID = WorkoutPreset.defaults.first?.id ?? ""
     @State private var isHintVisible = false
 
     var body: some View {
@@ -12,9 +11,7 @@ struct HomeView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                topBar
-
-                Spacer(minLength: 8)
+                Spacer(minLength: 28)
 
                 timerCluster
                     .frame(maxWidth: .infinity)
@@ -29,46 +26,6 @@ struct HomeView: View {
             }
         }
         .preferredColorScheme(.dark)
-        .onAppear {
-            if let activeRoutine = sessionEngine.state?.routine,
-               let matchedPreset = appModel.presets.first(where: { $0.asRoutine == activeRoutine }) {
-                selectedPresetID = matchedPreset.id
-            } else if selectedPresetID.isEmpty, let firstPreset = appModel.presets.first {
-                selectedPresetID = firstPreset.id
-            }
-        }
-    }
-
-    private var topBar: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Pelvic Floor")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(AppTheme.mutedInk)
-                Text(displayTitle)
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundStyle(AppTheme.ink)
-            }
-
-            Spacer()
-
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    isHintVisible.toggle()
-                }
-            } label: {
-                Image(systemName: "questionmark")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(AppTheme.ink)
-                    .frame(width: 54, height: 54)
-                    .background(
-                        Circle()
-                            .strokeBorder(.white.opacity(0.75), lineWidth: 2)
-                    )
-            }
-        }
-        .padding(.horizontal, 24)
-        .padding(.top, 16)
     }
 
     private var timerCluster: some View {
@@ -87,6 +44,9 @@ struct HomeView: View {
                 )
                 .blur(radius: 30)
                 .frame(width: 380, height: 380)
+                .scaleEffect(isHoldPhase ? 1 : 0.9)
+                .opacity(isHoldPhase ? 1 : 0)
+                .animation(.easeInOut(duration: 0.45), value: isHoldPhase)
 
             Circle()
                 .fill(
@@ -106,14 +66,14 @@ struct HomeView: View {
                     .stroke(.white.opacity(0.18), lineWidth: 10)
 
                 Circle()
-                    .trim(from: 0, to: max(phaseProgress, 0.02))
+                    .trim(from: 0, to: max(stageProgress, 0.02))
                     .stroke(
                         .white.opacity(0.75),
                         style: StrokeStyle(lineWidth: 10, lineCap: .round)
                     )
-                    .rotationEffect(.degrees(-90))
+                    .rotationEffect(.degrees(90))
 
-                progressKnob(progress: phaseProgress)
+                progressKnob(progress: stageProgress)
 
                 VStack(spacing: 6) {
                     Text("\(displaySeconds)")
@@ -122,7 +82,7 @@ struct HomeView: View {
                         .monospacedDigit()
 
                     Text(displaySubtitle)
-                        .font(.system(size: 34, weight: .semibold, design: .rounded))
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppTheme.ink)
                 }
             }
@@ -136,10 +96,10 @@ struct HomeView: View {
 
             if isHintVisible {
                 VStack(spacing: 10) {
-                    Text(currentPreset.subtitle)
+                    Text(currentStage.subtitle)
                         .font(.footnote.weight(.medium))
                         .foregroundStyle(.white)
-                    Text("\(currentPreset.squeezeSeconds)s squeeze • \(currentPreset.relaxSeconds)s relax • \(currentPreset.repetitions) reps")
+                    Text("\(currentStage.totalSeconds)s sec total • \(currentStage.squeezeSeconds)s squeeze • \(currentStage.relaxSeconds)s relax")
                         .font(.caption)
                         .foregroundStyle(AppTheme.mutedInk)
                 }
@@ -172,20 +132,33 @@ struct HomeView: View {
                     )
             }
 
-            HStack(spacing: 28) {
-                ForEach(appModel.presets) { preset in
-                    Button {
-                        guard canSwitchPreset else { return }
-                        selectedPresetID = preset.id
-                    } label: {
-                        Text(preset.name)
-                            .font(.system(size: 19, weight: selectedPresetID == preset.id ? .medium : .regular, design: .rounded))
-                            .foregroundStyle(selectedPresetID == preset.id ? AppTheme.ink : AppTheme.mutedInk.opacity(canSwitchPreset ? 1 : 0.5))
+            GeometryReader { geometry in
+                let itemWidth: CGFloat = 126
+                let itemSpacing: CGFloat = 28
+                let stepWidth = itemWidth + itemSpacing
+                let leadingInset = max((geometry.size.width - itemWidth) / 2, 0)
+
+                HStack(spacing: itemSpacing) {
+                    ForEach(Array(appModel.program.stages.enumerated()), id: \.element.id) { index, stage in
+                        VStack(spacing: 10) {
+                            Text(stage.name)
+                                .font(.system(size: 19, weight: currentStageIndex == index ? .medium : .regular, design: .rounded))
+                                .foregroundStyle(currentStageIndex == index ? AppTheme.ink : AppTheme.mutedInk)
+                                .lineLimit(1)
+
+                            Capsule()
+                                .fill(currentStageIndex == index ? AppTheme.ink : .white.opacity(0.12))
+                                .frame(width: 34, height: 4)
+                        }
+                        .frame(width: itemWidth)
                     }
-                    .buttonStyle(.plain)
-                    .disabled(!canSwitchPreset)
                 }
+                .frame(width: geometry.size.width, alignment: .leading)
+                .offset(x: leadingInset - (CGFloat(currentStageIndex) * stepWidth))
+                .animation(.easeInOut(duration: 0.35), value: currentStageIndex)
             }
+            .frame(height: 42)
+            .clipped()
         }
     }
 
@@ -212,24 +185,6 @@ struct HomeView: View {
                 )
             }
             .buttonStyle(.plain)
-
-            HStack(spacing: 16) {
-                metricPill(title: "Work", value: "\(currentPreset.squeezeSeconds)s")
-                metricPill(title: "Release", value: "\(currentPreset.relaxSeconds)s")
-                metricPill(title: "Reps", value: "\(currentPreset.repetitions)")
-            }
-
-            if let state = sessionEngine.state, state.status == .completed {
-                Button("Reset Session") {
-                    appModel.finishCompletedSession()
-                }
-                .font(.headline.weight(.medium))
-                .foregroundStyle(AppTheme.mutedInk)
-                .padding(.bottom, 10)
-            } else {
-                Color.clear
-                    .frame(height: 10)
-            }
         }
         .padding(.horizontal, 22)
         .padding(.bottom, 22)
@@ -243,21 +198,23 @@ struct HomeView: View {
         )
     }
 
-    private var currentPreset: WorkoutPreset {
-        appModel.presets.first(where: { $0.id == selectedPresetID }) ?? appModel.presets[0]
-    }
-
     private var currentState: SessionState? {
         sessionEngine.state
     }
 
-    private var canSwitchPreset: Bool {
-        guard let state = currentState else { return true }
-        return state.status == .completed
+    private var currentStage: WorkoutStage {
+        currentState?.stage ?? appModel.program.stages[0]
     }
 
-    private var displayTitle: String {
-        currentState?.routine.name ?? currentPreset.name
+    private var currentStageIndex: Int {
+        if let currentState {
+            return max(0, currentState.currentStageIndex - 1)
+        }
+        return 0
+    }
+
+    private var isHoldPhase: Bool {
+        currentState?.phase == .squeeze
     }
 
     private var displaySubtitle: String {
@@ -267,7 +224,7 @@ struct HomeView: View {
             }
             return state.phase.title
         }
-        return "Ready"
+        return currentStage.name
     }
 
     private var displaySeconds: Int {
@@ -275,17 +232,17 @@ struct HomeView: View {
             if state.status == .completed {
                 return 0
             }
-            return state.secondsRemainingInPhase
+            return state.secondsRemainingInStage
         }
-        return currentPreset.squeezeSeconds
+        return currentStage.totalSeconds
     }
 
-    private var phaseProgress: Double {
+    private var stageProgress: Double {
         if let state = currentState {
             if state.status == .completed {
                 return 1
             }
-            return state.phaseProgress
+            return state.stageProgress
         }
         return 0
     }
@@ -320,7 +277,7 @@ struct HomeView: View {
 
     private func primaryAction() {
         guard let state = currentState else {
-            appModel.startPreset(currentPreset)
+            appModel.startSession()
             return
         }
 
@@ -331,34 +288,16 @@ struct HomeView: View {
             sessionEngine.resume(settings: appModel.settings)
         case .completed:
             appModel.finishCompletedSession()
-            appModel.startPreset(currentPreset)
+            appModel.startSession()
         case .cancelled:
-            appModel.startPreset(currentPreset)
+            appModel.startSession()
         }
-    }
-
-    @ViewBuilder
-    private func metricPill(title: String, value: String) -> some View {
-        VStack(spacing: 6) {
-            Text(title)
-                .font(.caption.weight(.medium))
-                .foregroundStyle(AppTheme.mutedInk)
-            Text(value)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(AppTheme.ink)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(AppTheme.canvasSecondary)
-        )
     }
 
     @ViewBuilder
     private func progressKnob(progress: Double) -> some View {
         let clamped = min(max(progress, 0), 1)
-        let angle = Angle.degrees((clamped * 360) - 90)
+        let angle = Angle.degrees((clamped * 360) + 180)
         Circle()
             .fill(.white)
             .frame(width: 16, height: 16)
@@ -406,20 +345,18 @@ private struct HomeViewPreviewContainer: View {
     private func configureIfNeeded() {
         guard appModel.sessionEngine.state == nil else { return }
 
-        let preset = appModel.presets[1]
-
         switch mode {
         case .idle:
             break
         case .running:
-            appModel.startPreset(preset)
+            appModel.startSession()
         case .paused:
-            appModel.startPreset(preset)
+            appModel.startSession()
             appModel.sessionEngine.pause(settings: appModel.settings)
         case .completed:
             let snapshot = SessionSnapshot(
-                routine: preset.asRoutine,
-                startedAt: Date(timeIntervalSinceNow: -(preset.asRoutine.totalDuration + 2)),
+                program: appModel.program,
+                startedAt: Date(timeIntervalSinceNow: -(appModel.program.totalDuration + 2)),
                 accumulatedPauseInterval: 0,
                 pausedAt: nil
             )

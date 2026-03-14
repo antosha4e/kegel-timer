@@ -1,4 +1,3 @@
-import AudioToolbox
 import UIKit
 
 final class CueManager {
@@ -18,18 +17,11 @@ final class CueManager {
             }
         }
 
-        if settings.soundEnabled {
-            AudioServicesPlaySystemSound(1113)
-        }
     }
 
     func playCompletion(settings: AppSettings, isForeground: Bool) {
         if settings.hapticsEnabled && isForeground {
             feedbackGenerator.notificationOccurred(.success)
-        }
-
-        if settings.soundEnabled {
-            AudioServicesPlaySystemSound(1025)
         }
     }
 }

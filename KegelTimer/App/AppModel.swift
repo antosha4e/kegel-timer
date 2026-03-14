@@ -6,7 +6,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var settings: AppSettings
 
     let sessionEngine: SessionEngine
-    let presets: [WorkoutPreset]
+    let program: WorkoutProgram
 
     private let storage: AppStorage
     private let cueManager: CueManager
@@ -16,11 +16,11 @@ final class AppModel: ObservableObject {
     init(
         storage: AppStorage = AppStorage(),
         cueManager: CueManager = CueManager(),
-        presets: [WorkoutPreset] = WorkoutPreset.defaults
+        program: WorkoutProgram = .default
     ) {
         self.storage = storage
         self.cueManager = cueManager
-        self.presets = presets
+        self.program = program
         self.settings = storage.loadSettings()
         self.sessionEngine = SessionEngine(cueManager: cueManager)
 
@@ -43,8 +43,8 @@ final class AppModel: ObservableObject {
         applyIdleTimerPolicy()
     }
 
-    func startPreset(_ preset: WorkoutPreset) {
-        sessionEngine.start(routine: preset.asRoutine, settings: settings)
+    func startSession() {
+        sessionEngine.start(program: program, settings: settings)
         applyIdleTimerPolicy()
     }
 
