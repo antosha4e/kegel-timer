@@ -15,9 +15,6 @@
 		A10000000000000000000007 /* CueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* CueManager.swift */; };
 		A10000000000000000000008 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* Storage.swift */; };
 		A10000000000000000000009 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* HomeView.swift */; };
-		A1000000000000000000000A /* ActiveSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* ActiveSessionView.swift */; };
-		A1000000000000000000000B /* CustomRoutineEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* CustomRoutineEditorView.swift */; };
-		A1000000000000000000000C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* SettingsView.swift */; };
 		A1000000000000000000000D /* Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* Tokens.swift */; };
 /* End PBXBuildFile section */
 
@@ -31,9 +28,6 @@
 		A20000000000000000000007 /* CueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueManager.swift; sourceTree = "<group>"; };
 		A20000000000000000000008 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		A2000000000000000000000A /* ActiveSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionView.swift; sourceTree = "<group>"; };
-		A2000000000000000000000B /* CustomRoutineEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRoutineEditorView.swift; sourceTree = "<group>"; };
-		A2000000000000000000000C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A2000000000000000000000D /* Tokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokens.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -100,9 +94,6 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000009 /* HomeView.swift */,
-				A2000000000000000000000A /* ActiveSessionView.swift */,
-				A2000000000000000000000B /* CustomRoutineEditorView.swift */,
-				A2000000000000000000000C /* SettingsView.swift */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -190,9 +181,6 @@
 				A10000000000000000000007 /* CueManager.swift in Sources */,
 				A10000000000000000000008 /* Storage.swift in Sources */,
 				A10000000000000000000009 /* HomeView.swift in Sources */,
-				A1000000000000000000000A /* ActiveSessionView.swift in Sources */,
-				A1000000000000000000000B /* CustomRoutineEditorView.swift in Sources */,
-				A1000000000000000000000C /* SettingsView.swift in Sources */,
 				A1000000000000000000000D /* Tokens.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

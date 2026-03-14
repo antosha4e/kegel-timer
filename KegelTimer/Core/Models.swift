@@ -49,63 +49,30 @@ struct WorkoutPreset: Identifiable, Hashable {
 
     static let defaults: [WorkoutPreset] = [
         WorkoutPreset(
-            id: "starter",
-            name: "Starter Flow",
-            subtitle: "Gentle entry with short holds",
+            id: "short-holding",
+            name: "Short Holding",
+            subtitle: "Quick contractions with easy pacing",
             squeezeSeconds: 4,
             relaxSeconds: 6,
             repetitions: 10
         ),
         WorkoutPreset(
-            id: "steady",
-            name: "Steady Builder",
-            subtitle: "Balanced work and recovery",
+            id: "rest",
+            name: "Rest",
+            subtitle: "Balanced rhythm with longer release",
             squeezeSeconds: 6,
-            relaxSeconds: 6,
+            relaxSeconds: 8,
             repetitions: 12
         ),
         WorkoutPreset(
-            id: "endurance",
-            name: "Endurance Hold",
-            subtitle: "Longer contractions for control",
+            id: "trembling",
+            name: "Trembling",
+            subtitle: "Longer squeeze intervals for endurance",
             squeezeSeconds: 8,
             relaxSeconds: 8,
             repetitions: 10
         )
     ]
-}
-
-struct CustomRoutine: Codable, Equatable {
-    var name: String
-    var squeezeSeconds: Int
-    var relaxSeconds: Int
-    var repetitions: Int
-
-    var normalized: CustomRoutine {
-        CustomRoutine(
-            name: name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Custom Routine" : name.trimmingCharacters(in: .whitespacesAndNewlines),
-            squeezeSeconds: max(1, squeezeSeconds),
-            relaxSeconds: max(1, relaxSeconds),
-            repetitions: max(1, repetitions)
-        )
-    }
-
-    var asSessionRoutine: SessionRoutine {
-        let cleaned = normalized
-        return SessionRoutine(
-            name: cleaned.name,
-            squeezeSeconds: cleaned.squeezeSeconds,
-            relaxSeconds: cleaned.relaxSeconds,
-            repetitions: cleaned.repetitions
-        )
-    }
-
-    static let `default` = CustomRoutine(
-        name: "Custom Routine",
-        squeezeSeconds: 5,
-        relaxSeconds: 5,
-        repetitions: 10
-    )
 }
 
 struct SessionRoutine: Codable, Equatable {
@@ -133,6 +100,11 @@ struct SessionState: Equatable {
     var progress: Double {
         guard totalDuration > 0 else { return 0 }
         return Double(elapsedSeconds) / Double(totalDuration)
+    }
+
+    var phaseProgress: Double {
+        guard phaseDuration > 0 else { return 0 }
+        return 1 - (Double(secondsRemainingInPhase) / Double(phaseDuration))
     }
 
     var isPaused: Bool {

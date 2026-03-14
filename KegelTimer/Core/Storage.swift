@@ -3,7 +3,6 @@ import Foundation
 struct AppStorage {
     private enum Key {
         static let settings = "settings"
-        static let customRoutine = "customRoutine"
         static let activeSnapshot = "activeSnapshot"
     }
 
@@ -21,14 +20,6 @@ struct AppStorage {
 
     func saveSettings(_ settings: AppSettings) {
         saveValue(settings, forKey: Key.settings)
-    }
-
-    func loadCustomRoutine() -> CustomRoutine {
-        loadValue(forKey: Key.customRoutine, defaultValue: .default)
-    }
-
-    func saveCustomRoutine(_ routine: CustomRoutine) {
-        saveValue(routine, forKey: Key.customRoutine)
     }
 
     func loadActiveSnapshot() -> SessionSnapshot? {
