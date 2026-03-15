@@ -35,26 +35,10 @@ struct SessionView: View {
     }
 
     private var countdownOverlay: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack {
             Rectangle()
                 .fill(.black.opacity(0.84))
                 .ignoresSafeArea()
-
-            Button {
-                appModel.cancelStartCountdown()
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 28, weight: .regular))
-                    .foregroundStyle(.white)
-                    .frame(width: 56, height: 56)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(AppTheme.panel.opacity(0.96))
-                    )
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 54)
-            .padding(.trailing, 26)
 
             VStack(spacing: 40) {
                 VStack(spacing: 10) {
@@ -380,64 +364,5 @@ struct SessionView: View {
             .frame(width: 16, height: 16)
             .offset(y: -122)
             .rotationEffect(angle)
-    }
-}
-
-#Preview("Idle") {
-    SessionViewPreviewContainer(mode: .idle)
-}
-
-#Preview("Running") {
-    SessionViewPreviewContainer(mode: .running)
-}
-
-#Preview("Paused") {
-    SessionViewPreviewContainer(mode: .paused)
-}
-
-#Preview("Completed") {
-    SessionViewPreviewContainer(mode: .completed)
-}
-
-private struct SessionViewPreviewContainer: View {
-    enum Mode {
-        case idle
-        case running
-        case paused
-        case completed
-    }
-
-    @StateObject private var appModel = AppModel()
-    let mode: Mode
-
-    var body: some View {
-        SessionView()
-            .environmentObject(appModel)
-            .environmentObject(appModel.sessionEngine)
-            .task {
-                configureIfNeeded()
-            }
-    }
-
-    private func configureIfNeeded() {
-        guard appModel.sessionEngine.state == nil else { return }
-
-        switch mode {
-        case .idle:
-            break
-        case .running:
-            appModel.startSession()
-        case .paused:
-            appModel.startSession()
-            appModel.sessionEngine.pause(settings: appModel.settings)
-        case .completed:
-            let snapshot = SessionSnapshot(
-                program: appModel.program,
-                startedAt: Date(timeIntervalSinceNow: -(appModel.program.totalDuration + 2)),
-                accumulatedPauseInterval: 0,
-                pausedAt: nil
-            )
-            appModel.sessionEngine.restore(from: snapshot, settings: appModel.settings)
-        }
     }
 }

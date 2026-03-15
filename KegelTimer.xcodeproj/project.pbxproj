@@ -19,6 +19,7 @@
 		A1000000000000000000000D /* Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* Tokens.swift */; };
 		A1000000000000000000000E /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* SessionView.swift */; };
 		A1000000000000000000000F /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* CompletionView.swift */; };
+		A10000000000000000000010 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		A2000000000000000000000D /* Tokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokens.swift; sourceTree = "<group>"; };
 		A2000000000000000000000E /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
 		A2000000000000000000000F /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionView.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 			children = (
 				A20000000000000000000009 /* HomeView.swift */,
 				A40000000000000000000009 /* Completion */,
+				A40000000000000000000010 /* Settings */,
 				A40000000000000000000008 /* Session */,
 			);
 			path = Features;
@@ -129,6 +132,14 @@
 				A2000000000000000000000F /* CompletionView.swift */,
 			);
 			path = Completion;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000010 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000010 /* SettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -210,6 +221,7 @@
 				A1000000000000000000000D /* Tokens.swift in Sources */,
 				A1000000000000000000000E /* SessionView.swift in Sources */,
 				A1000000000000000000000F /* CompletionView.swift in Sources */,
+				A10000000000000000000010 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

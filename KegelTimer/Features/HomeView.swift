@@ -69,8 +69,3 @@ struct HomeView: View {
         .preferredColorScheme(.dark)
     }
 }
-
-#Preview {
-    HomeView()
-        .environmentObject(AppModel())
-}

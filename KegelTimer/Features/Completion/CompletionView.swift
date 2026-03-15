@@ -138,8 +138,3 @@ struct CompletionView: View {
         UnevenRoundedRectangle(topLeadingRadius: 140, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 160)
     }
 }
-
-#Preview {
-    CompletionView()
-        .environmentObject(AppModel())
-}
