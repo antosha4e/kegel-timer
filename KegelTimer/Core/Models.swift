@@ -58,9 +58,9 @@ struct WorkoutProgram: Codable, Equatable {
                 id: "hold-1",
                 name: "Hold",
                 subtitle: "Quick contractions to wake up the pattern",
-                totalSeconds: 24,
+                totalSeconds: 25,
                 squeezeSeconds: 4,
-                relaxSeconds: 4
+                relaxSeconds: 3
             ),
             WorkoutStage(
                 id: "rest-1",
@@ -90,9 +90,9 @@ struct WorkoutProgram: Codable, Equatable {
                 id: "hold-2",
                 name: "Hold",
                 subtitle: "Return to crisp controlled contractions",
-                totalSeconds: 24,
+                totalSeconds: 25,
                 squeezeSeconds: 4,
-                relaxSeconds: 4
+                relaxSeconds: 3
             ),
             WorkoutStage(
                 id: "trembling-2",

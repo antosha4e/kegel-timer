@@ -1,0 +1,27 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="224" fill="#0A0C11"/>
+  <circle cx="512" cy="512" r="288" fill="#10141C"/>
+  <circle cx="512" cy="512" r="288" stroke="url(#ring)" stroke-width="8"/>
+  <path d="M302 572C372 458 453 455 513 534C573 614 651 611 724 462" stroke="url(#waveA)" stroke-width="58" stroke-linecap="round"/>
+  <path d="M302 462C374 575 453 578 513 500C574 423 653 420 724 572" stroke="url(#waveB)" stroke-width="58" stroke-linecap="round"/>
+  <circle cx="512" cy="512" r="356" fill="url(#outerGlow)"/>
+  <defs>
+    <linearGradient id="ring" x1="257" y1="281" x2="743" y2="738" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#232935"/>
+      <stop offset="1" stop-color="#394255"/>
+    </linearGradient>
+    <linearGradient id="waveA" x1="302" y1="572" x2="724" y2="462" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF6850"/>
+      <stop offset="1" stop-color="#FFB29B"/>
+    </linearGradient>
+    <linearGradient id="waveB" x1="302" y1="462" x2="724" y2="572" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C16B5F"/>
+      <stop offset="1" stop-color="#FFD2C4"/>
+    </linearGradient>
+    <radialGradient id="outerGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 512) rotate(90) scale(356)">
+      <stop stop-color="#18202B" stop-opacity="0"/>
+      <stop offset="0.82" stop-color="#18202B" stop-opacity="0"/>
+      <stop offset="1" stop-color="#18202B"/>
+    </radialGradient>
+  </defs>
+</svg>

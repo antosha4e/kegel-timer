@@ -15,7 +15,10 @@
 		A10000000000000000000007 /* CueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* CueManager.swift */; };
 		A10000000000000000000008 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* Storage.swift */; };
 		A10000000000000000000009 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* HomeView.swift */; };
+		A1000000000000000000000E /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* SessionView.swift */; };
+		A1000000000000000000000F /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* CompletionView.swift */; };
 		A1000000000000000000000D /* Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* Tokens.swift */; };
+		A10000000000000000000010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +32,9 @@
 		A20000000000000000000008 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A2000000000000000000000D /* Tokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokens.swift; sourceTree = "<group>"; };
+		A2000000000000000000000E /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
+		A2000000000000000000000F /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionView.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +59,7 @@
 		A40000000000000000000002 /* KegelTimer */ = {
 			isa = PBXGroup;
 			children = (
+				A20000000000000000000010 /* Assets.xcassets */,
 				A40000000000000000000004 /* App */,
 				A40000000000000000000005 /* Core */,
 				A40000000000000000000006 /* Features */,
@@ -94,6 +101,8 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000009 /* HomeView.swift */,
+				A40000000000000000000009 /* Completion */,
+				A40000000000000000000008 /* Session */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -104,6 +113,22 @@
 				A2000000000000000000000D /* Tokens.swift */,
 			);
 			path = Design;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000008 /* Session */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000000E /* SessionView.swift */,
+			);
+			path = Session;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000009 /* Completion */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000000F /* CompletionView.swift */,
+			);
+			path = Completion;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -163,6 +188,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A10000000000000000000010 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,6 +208,8 @@
 				A10000000000000000000008 /* Storage.swift in Sources */,
 				A10000000000000000000009 /* HomeView.swift in Sources */,
 				A1000000000000000000000D /* Tokens.swift in Sources */,
+				A1000000000000000000000E /* SessionView.swift in Sources */,
+				A1000000000000000000000F /* CompletionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,7 +290,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = YMU64U3WR8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Kegel Timer";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
@@ -288,7 +316,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = YMU64U3WR8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Kegel Timer";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";

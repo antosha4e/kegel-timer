@@ -1,0 +1,22 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="224" fill="#0A0B0F"/>
+  <circle cx="512" cy="512" r="270" fill="url(#bgGlow)"/>
+  <circle cx="512" cy="512" r="246" stroke="url(#ringGlow)" stroke-width="72" stroke-linecap="round"/>
+  <circle cx="726" cy="380" r="34" fill="#FFF4EF"/>
+  <circle cx="726" cy="380" r="58" fill="url(#dotGlow)"/>
+  <defs>
+    <radialGradient id="bgGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 512) rotate(90) scale(270)">
+      <stop stop-color="#171A23"/>
+      <stop offset="1" stop-color="#0A0B0F" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ringGlow" x1="276" y1="304" x2="760" y2="740" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF6A4D"/>
+      <stop offset="0.5" stop-color="#FF3B30"/>
+      <stop offset="1" stop-color="#FFD6C8"/>
+    </linearGradient>
+    <radialGradient id="dotGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(726 380) rotate(90) scale(58)">
+      <stop stop-color="#FF8E79" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#FF8E79" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
