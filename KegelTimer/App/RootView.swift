@@ -17,7 +17,9 @@ struct RootView: View {
                 }
             }
             .overlay(alignment: .topTrailing) {
-                topControls(topInset: proxy.safeAreaInsets.top)
+                if sessionEngine.state?.status != .completed {
+                    topControls(topInset: proxy.safeAreaInsets.top)
+                }
             }
         }
         .sheet(isPresented: $isSettingsPresented) {
@@ -29,18 +31,26 @@ struct RootView: View {
     }
 
     private func topControls(topInset: CGFloat) -> some View {
-        HStack(spacing: 12) {
-            iconButton(systemName: "gearshape.fill") {
-                isSettingsPresented = true
+        VStack(alignment: .trailing, spacing: 10) {
+            HStack(spacing: 12) {
+                iconButton(systemName: "gearshape.fill") {
+                    isSettingsPresented = true
+                }
+
+                if appModel.isStartCountdownActive {
+                    iconButton(systemName: "xmark") {
+                        appModel.cancelStartCountdown()
+                    }
+                }
             }
 
-            if appModel.isStartCountdownActive {
-                iconButton(systemName: "xmark") {
-                    appModel.cancelStartCountdown()
+            if canSkipStage {
+                smallIconButton(systemName: "forward.end.fill") {
+                    appModel.skipToNextStage()
                 }
             }
         }
-        .padding(.top, topInset + 12)
+        .padding(.top, topInset + 1)
         .padding(.trailing, 24)
     }
 
@@ -60,6 +70,29 @@ struct RootView: View {
                 )
         }
         .buttonStyle(.plain)
+    }
+
+    private func smallIconButton(systemName: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 36, height: 36)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(AppTheme.panel.opacity(0.94))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(.white.opacity(0.08), lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var canSkipStage: Bool {
+        guard let state = sessionEngine.state else { return false }
+        return state.status == .running || state.status == .paused
     }
 }
 

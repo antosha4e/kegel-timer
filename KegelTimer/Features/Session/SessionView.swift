@@ -201,7 +201,7 @@ struct SessionView: View {
                 let leadingInset = max((geometry.size.width - itemWidth) / 2, 0)
 
                 HStack(spacing: itemSpacing) {
-                    ForEach(Array(appModel.program.stages.enumerated()), id: \.element.id) { index, stage in
+                    ForEach(Array(activeProgram.stages.enumerated()), id: \.element.id) { index, stage in
                         VStack(spacing: 10) {
                             Text(stage.name)
                                 .font(.system(size: 19, weight: currentStageIndex == index ? .medium : .regular, design: .rounded))
@@ -264,8 +264,12 @@ struct SessionView: View {
         sessionEngine.state
     }
 
+    private var activeProgram: WorkoutProgram {
+        currentState?.program ?? appModel.program
+    }
+
     private var currentStage: WorkoutStage {
-        currentState?.stage ?? appModel.program.stages[0]
+        currentState?.stage ?? activeProgram.stages[0]
     }
 
     private var currentStageIndex: Int {

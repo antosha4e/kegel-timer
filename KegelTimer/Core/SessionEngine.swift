@@ -53,6 +53,30 @@ final class SessionEngine: ObservableObject {
         persistSnapshot()
     }
 
+    func skipToNextStage(settings: AppSettings) {
+        guard let currentSnapshot = snapshot else { return }
+
+        let referenceDate = currentSnapshot.pausedAt ?? Date()
+        let elapsed = max(0, referenceDate.timeIntervalSince(currentSnapshot.startedAt) - currentSnapshot.accumulatedPauseInterval)
+
+        guard let stageResolution = resolveStage(for: elapsed, in: currentSnapshot.program) else { return }
+
+        let consumedBeforeStage = currentSnapshot.program.stages[..<stageResolution.stageIndex]
+            .reduce(0) { $0 + $1.totalDuration }
+        let nextStageElapsed = min(
+            currentSnapshot.program.totalDuration,
+            consumedBeforeStage + stageResolution.stage.totalDuration
+        )
+
+        var updatedSnapshot = currentSnapshot
+        updatedSnapshot.startedAt = referenceDate
+            .addingTimeInterval(-(updatedSnapshot.accumulatedPauseInterval + nextStageElapsed))
+        snapshot = updatedSnapshot
+
+        updateState(using: referenceDate, settings: settings, shouldNotifyPhaseTransition: false)
+        persistSnapshot()
+    }
+
     func cancel() {
         snapshot = nil
         state = nil

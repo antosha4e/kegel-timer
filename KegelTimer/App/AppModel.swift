@@ -3,13 +3,10 @@ import SwiftUI
 
 @MainActor
 final class AppModel: ObservableObject {
-    private static let startCountdownDuration: TimeInterval = 3
-
     @Published private(set) var settings: AppSettings
     @Published private(set) var startCountdownRemaining: TimeInterval?
 
     let sessionEngine: SessionEngine
-    let program: WorkoutProgram
 
     private let storage: AppStorage
     private let cueManager: CueManager
@@ -19,12 +16,10 @@ final class AppModel: ObservableObject {
 
     init(
         storage: AppStorage = AppStorage(),
-        cueManager: CueManager = CueManager(),
-        program: WorkoutProgram = .default
+        cueManager: CueManager = CueManager()
     ) {
         self.storage = storage
         self.cueManager = cueManager
-        self.program = program
         self.settings = storage.loadSettings()
         self.sessionEngine = SessionEngine(cueManager: cueManager)
 
@@ -38,6 +33,10 @@ final class AppModel: ObservableObject {
                 self?.applyIdleTimerPolicy()
             }
             .store(in: &cancellables)
+    }
+
+    var program: WorkoutProgram {
+        settings.difficulty.program
     }
 
     func restore() {
@@ -56,8 +55,14 @@ final class AppModel: ObservableObject {
 
     func beginSessionStartCountdown() {
         guard startCountdownRemaining == nil, sessionEngine.state == nil else { return }
+        let countdownDuration = configuredStartCountdownDuration
 
-        startCountdownRemaining = Self.startCountdownDuration
+        guard countdownDuration > 0 else {
+            startSession()
+            return
+        }
+
+        startCountdownRemaining = countdownDuration
         countdownTask?.cancel()
         countdownTask = Task { [weak self] in
             guard let self else { return }
@@ -66,7 +71,7 @@ final class AppModel: ObservableObject {
 
             while !Task.isCancelled {
                 let elapsed = Date().timeIntervalSince(startDate)
-                let remaining = max(0, Self.startCountdownDuration - elapsed)
+                let remaining = max(0, countdownDuration - elapsed)
                 self.startCountdownRemaining = remaining
 
                 if remaining <= 0 {
@@ -98,8 +103,10 @@ final class AppModel: ObservableObject {
 
     var startCountdownProgress: Double {
         guard let startCountdownRemaining else { return 0 }
-        let elapsed = Self.startCountdownDuration - startCountdownRemaining
-        return min(max(elapsed / Self.startCountdownDuration, 0), 1)
+        let countdownDuration = configuredStartCountdownDuration
+        guard countdownDuration > 0 else { return 0 }
+        let elapsed = countdownDuration - startCountdownRemaining
+        return min(max(elapsed / countdownDuration, 0), 1)
     }
 
     func setSoundEnabled(_ enabled: Bool) {
@@ -118,6 +125,21 @@ final class AppModel: ObservableObject {
         applyIdleTimerPolicy()
     }
 
+    func setStartCountdownDuration(_ duration: Int) {
+        settings.startCountdownDuration = duration
+        persistSettings()
+    }
+
+    func setDifficulty(_ difficulty: WorkoutDifficulty) {
+        settings.difficulty = difficulty
+        persistSettings()
+    }
+
+    func skipToNextStage() {
+        sessionEngine.skipToNextStage(settings: settings)
+        applyIdleTimerPolicy()
+    }
+
     func finishCompletedSession() {
         sessionEngine.dismissCompletedState()
         applyIdleTimerPolicy()
@@ -133,6 +155,10 @@ final class AppModel: ObservableObject {
 
     private func persistSettings() {
         storage.saveSettings(settings)
+    }
+
+    private var configuredStartCountdownDuration: TimeInterval {
+        TimeInterval(settings.startCountdownDuration)
     }
 
     private func applyIdleTimerPolicy() {

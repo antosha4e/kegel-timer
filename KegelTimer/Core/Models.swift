@@ -51,7 +51,53 @@ struct WorkoutProgram: Codable, Equatable {
         stages.reduce(0) { $0 + $1.totalDuration }
     }
 
-    static let `default` = WorkoutProgram(
+    static let easy = WorkoutProgram(
+        name: "Pelvic Floor Routine",
+        stages: [
+            WorkoutStage(
+                id: "hold-1",
+                name: "Hold",
+                subtitle: "Steady warm-up contractions to build coordination",
+                totalSeconds: 21,
+                squeezeSeconds: 3,
+                relaxSeconds: 3
+            ),
+            WorkoutStage(
+                id: "rest-1",
+                name: "Rest",
+                subtitle: "Full release before the next round",
+                totalSeconds: 8,
+                squeezeSeconds: 0,
+                relaxSeconds: 8
+            ),
+            WorkoutStage(
+                id: "pulse-1",
+                name: "Pulse",
+                subtitle: "Shorter efforts focused on control",
+                totalSeconds: 22,
+                squeezeSeconds: 2,
+                relaxSeconds: 3
+            ),
+            WorkoutStage(
+                id: "rest-2",
+                name: "Rest",
+                subtitle: "Take a longer reset before the finish",
+                totalSeconds: 8,
+                squeezeSeconds: 0,
+                relaxSeconds: 8
+            ),
+            WorkoutStage(
+                id: "hold-2",
+                name: "Hold",
+                subtitle: "Finish with clean, even squeezes",
+                totalSeconds: 21,
+                squeezeSeconds: 3,
+                relaxSeconds: 3
+            )
+        ]
+    )
+
+    static let intermediate = WorkoutProgram(
         name: "Pelvic Floor Routine",
         stages: [
             WorkoutStage(
@@ -95,6 +141,14 @@ struct WorkoutProgram: Codable, Equatable {
                 relaxSeconds: 3
             ),
             WorkoutStage(
+                id: "rest-1",
+                name: "Rest",
+                subtitle: "Six seconds of full release before the next effort",
+                totalSeconds: 6,
+                squeezeSeconds: 0,
+                relaxSeconds: 6
+            ),
+            WorkoutStage(
                 id: "trembling-2",
                 name: "Trembling",
                 subtitle: "Finish with sustained effort and control",
@@ -104,6 +158,111 @@ struct WorkoutProgram: Codable, Equatable {
             )
         ]
     )
+
+    static let hard = WorkoutProgram(
+        name: "Pelvic Floor Routine",
+        stages: [
+            WorkoutStage(
+                id: "hold-1",
+                name: "Hold",
+                subtitle: "Longer contractions to challenge endurance",
+                totalSeconds: 32,
+                squeezeSeconds: 4,
+                relaxSeconds: 3
+            ),
+            WorkoutStage(
+                id: "rest-1",
+                name: "Rest",
+                subtitle: "Reset fully before the next effort",
+                totalSeconds: 6,
+                squeezeSeconds: 0,
+                relaxSeconds: 6
+            ),
+            WorkoutStage(
+                id: "power-1",
+                name: "Power",
+                subtitle: "Quick, repeated contractions at a higher pace",
+                totalSeconds: 33,
+                squeezeSeconds: 3,
+                relaxSeconds: 2
+            ),
+            WorkoutStage(
+                id: "rest-2",
+                name: "Rest",
+                subtitle: "Short recovery before the final push",
+                totalSeconds: 6,
+                squeezeSeconds: 0,
+                relaxSeconds: 6
+            ),
+            WorkoutStage(
+                id: "hold-2",
+                name: "Hold",
+                subtitle: "Stay steady through the toughest squeeze block",
+                totalSeconds: 32,
+                squeezeSeconds: 4,
+                relaxSeconds: 3
+            ),
+            WorkoutStage(
+                id: "rest-3",
+                name: "Rest",
+                subtitle: "Short recovery before the final push",
+                totalSeconds: 6,
+                squeezeSeconds: 0,
+                relaxSeconds: 6
+            ),
+            WorkoutStage(
+                id: "power-2",
+                name: "Power",
+                subtitle: "Finish with fast, controlled pulses",
+                totalSeconds: 33,
+                squeezeSeconds: 3,
+                relaxSeconds: 2
+            )
+        ]
+    )
+
+    static let `default` = intermediate
+}
+
+enum WorkoutDifficulty: String, Codable, CaseIterable, Identifiable {
+    case easy
+    case intermediate
+    case hard
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .easy:
+            return "Easy"
+        case .intermediate:
+            return "Intermediate"
+        case .hard:
+            return "Hard"
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .easy:
+            return "Shorter holds with more recovery"
+        case .intermediate:
+            return "Balanced pacing for most sessions"
+        case .hard:
+            return "Longer holds and tighter recovery"
+        }
+    }
+
+    var program: WorkoutProgram {
+        switch self {
+        case .easy:
+            return .easy
+        case .intermediate:
+            return .intermediate
+        case .hard:
+            return .hard
+        }
+    }
 }
 
 struct SessionState: Equatable {
@@ -152,10 +311,14 @@ struct AppSettings: Codable, Equatable {
     var soundEnabled: Bool
     var hapticsEnabled: Bool
     var keepScreenAwake: Bool
+    var startCountdownDuration: Int
+    var difficulty: WorkoutDifficulty
 
     static let `default` = AppSettings(
         soundEnabled: true,
         hapticsEnabled: true,
-        keepScreenAwake: true
+        keepScreenAwake: true,
+        startCountdownDuration: 3,
+        difficulty: .intermediate
     )
 }
