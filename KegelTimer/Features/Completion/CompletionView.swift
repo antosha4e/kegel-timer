@@ -2,48 +2,29 @@ import SwiftUI
 
 struct CompletionView: View {
     @EnvironmentObject private var appModel: AppModel
+    @EnvironmentObject private var sessionEngine: SessionEngine
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             completionBackground
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                Spacer(minLength: 80)
+                Spacer(minLength: 48)
 
-                completionBadge
-
-                Text("Session Complete!")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.top, 26)
-
-                Text("Take a break and come back later for another round.")
-                    .font(.system(size: 18, weight: .medium, design: .rounded))
-                    .foregroundStyle(AppTheme.mutedInk)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 18)
-                    .padding(.horizontal, 36)
-
-                Spacer()
-
-                Button {
-                    appModel.finishCompletedSession()
-                } label: {
-                    Text("Continue")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 24)
-                        .background(
-                            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                                .fill(AppTheme.squeezeGradient)
-                        )
+                HStack {
+                    Spacer(minLength: 0)
+                    completionCard
+                    Spacer(minLength: 0)
                 }
-                .buttonStyle(.plain)
-                .padding(.horizontal, 24)
-                .padding(.bottom, 28)
+                .padding(.horizontal, 20)
+
+                Spacer(minLength: 0)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .safeAreaInset(edge: .bottom) {
+            continueDock
         }
         .preferredColorScheme(.dark)
     }
@@ -61,12 +42,12 @@ struct CompletionView: View {
             )
 
             moonGlow
-                .offset(x: 118, y: -232)
+                .offset(x: 90, y: -232)
 
             cloudLayer(width: 300, height: 120, opacity: 0.28)
                 .offset(x: -126, y: -286)
             cloudLayer(width: 240, height: 96, opacity: 0.2)
-                .offset(x: 124, y: -224)
+                .offset(x: 96, y: -224)
             mountainShape
                 .fill(Color.black.opacity(0.55))
                 .frame(width: 420, height: 360)
@@ -76,6 +57,36 @@ struct CompletionView: View {
                 .frame(width: 430, height: 330)
                 .offset(y: 44)
         }
+    }
+
+    private var completionCard: some View {
+        VStack(spacing: 0) {
+            completionBadge
+                .padding(.top, 34)
+
+            Text("Session Complete!")
+                .font(.system(size: 34, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+                .padding(.top, 24)
+
+            Text("Take a break and come back later for another round.")
+                .font(.system(size: 18, weight: .medium, design: .rounded))
+                .foregroundStyle(AppTheme.mutedInk)
+                .multilineTextAlignment(.center)
+                .padding(.top, 18)
+                .padding(.horizontal, 28)
+                .padding(.bottom, 36)
+        }
+        .frame(maxWidth: 420)
+        .background(
+            RoundedRectangle(cornerRadius: 42, style: .continuous)
+                .fill(.black.opacity(0.72))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 42, style: .continuous)
+                .stroke(.white.opacity(0.05), lineWidth: 1)
+        )
     }
 
     private var completionBadge: some View {
@@ -98,6 +109,31 @@ struct CompletionView: View {
                 .foregroundStyle(.white)
                 .monospacedDigit()
         }
+    }
+
+    private var continueDock: some View {
+        HStack {
+            Spacer(minLength: 0)
+            Button {
+                appModel.finishCompletedSession()
+            } label: {
+                Text("Continue")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+                    .background(
+                        RoundedRectangle(cornerRadius: 30, style: .continuous)
+                            .fill(AppTheme.squeezeGradient)
+                    )
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: 520)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 30)
+        .padding(.top, 12)
+        .padding(.bottom, 16)
     }
 
     private var moonGlow: some View {
@@ -136,5 +172,13 @@ struct CompletionView: View {
 
     private var foregroundRidge: some Shape {
         UnevenRoundedRectangle(topLeadingRadius: 140, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 160)
+    }
+
+    private var completedStages: Int {
+        min(sessionEngine.state?.currentStageIndex ?? totalStages, totalStages)
+    }
+
+    private var totalStages: Int {
+        sessionEngine.state?.totalStages ?? appModel.program.stages.count
     }
 }
