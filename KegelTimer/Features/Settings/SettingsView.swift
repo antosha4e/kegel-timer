@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var appModel: AppModel
-    @State private var isRemoveAdsNoticePresented = false
 
     private let countdownOptions = [0, 3, 5]
 
@@ -108,27 +107,70 @@ struct SettingsView: View {
                             divider
 
                             Button {
-                                isRemoveAdsNoticePresented = true
+                                Task {
+                                    await appModel.purchaseRemoveAds()
+                                }
                             } label: {
                                 HStack(spacing: 12) {
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text("Remove Ads")
+                                        Text(appModel.removeAdsCTA)
                                             .font(.system(size: 18, weight: .semibold, design: .rounded))
-                                            .foregroundStyle(AppTheme.ink)
+                                            .foregroundStyle(appModel.hasRemovedAds ? AppTheme.mutedInk : AppTheme.ink)
 
-                                        Text("One-time purchase placeholder. StoreKit is not wired yet.")
+                                        Text(appModel.hasRemovedAds
+                                             ? "This one-time purchase is already active on this device."
+                                             : "One-time purchase to permanently remove banner ads.")
                                             .font(.system(size: 14, weight: .medium, design: .rounded))
                                             .foregroundStyle(AppTheme.mutedInk)
                                     }
 
                                     Spacer(minLength: 12)
 
-                                    Image(systemName: "chevron.right")
-                                        .font(.system(size: 14, weight: .bold))
-                                        .foregroundStyle(AppTheme.mutedInk)
+                                    if appModel.isStoreProcessing {
+                                        ProgressView()
+                                            .tint(AppTheme.accent)
+                                    } else {
+                                        Image(systemName: appModel.hasRemovedAds ? "checkmark.circle.fill" : "chevron.right")
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundStyle(appModel.hasRemovedAds ? AppTheme.accent : AppTheme.mutedInk)
+                                    }
                                 }
                             }
                             .buttonStyle(.plain)
+                            .disabled(appModel.hasRemovedAds || appModel.isStoreProcessing)
+
+                            divider
+
+                            Button {
+                                Task {
+                                    await appModel.restorePurchases()
+                                }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Restore Purchases")
+                                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                                            .foregroundStyle(AppTheme.ink)
+
+                                        Text("Use this if you already bought Remove Ads on another device.")
+                                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                                            .foregroundStyle(AppTheme.mutedInk)
+                                    }
+
+                                    Spacer(minLength: 12)
+
+                                    if appModel.isStoreProcessing {
+                                        ProgressView()
+                                            .tint(AppTheme.accent)
+                                    } else {
+                                        Image(systemName: "arrow.clockwise")
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundStyle(AppTheme.mutedInk)
+                                    }
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(appModel.isStoreProcessing)
                         }
                     }
                 }
@@ -147,10 +189,12 @@ struct SettingsView: View {
             }
         }
         .preferredColorScheme(.dark)
-        .alert("Remove Ads Not Available Yet", isPresented: $isRemoveAdsNoticePresented) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("The ad-free purchase flow is planned, but StoreKit has not been implemented yet.")
+        .alert(item: $appModel.alert) { alert in
+            Alert(
+                title: Text(alert.title),
+                message: Text(alert.message),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
 

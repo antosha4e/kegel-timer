@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		314F8F062F66F73F00F822FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 314F8F052F66F73F00F822FD /* Assets.xcassets */; };
 		314F8F072F66F73F00F822FD /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 314F8F082F66F73F00F822FD /* GoogleMobileAds */; };
+		313A5A442F6F0DDD006D6235 /* KegelTimer.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 313A5A432F6F0DDD006D6235 /* KegelTimer.storekit */; };
 		A10000000000000000000002 /* KegelTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* KegelTimerApp.swift */; };
 		A10000000000000000000003 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* AppModel.swift */; };
 		A10000000000000000000004 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* RootView.swift */; };
@@ -17,16 +18,18 @@
 		A10000000000000000000007 /* CueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* CueManager.swift */; };
 		A10000000000000000000008 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* Storage.swift */; };
 		A10000000000000000000009 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* HomeView.swift */; };
-		A10000000000000000000011 /* KegelEducationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* KegelEducationView.swift */; };
 		A1000000000000000000000D /* Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* Tokens.swift */; };
 		A1000000000000000000000E /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* SessionView.swift */; };
 		A1000000000000000000000F /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* CompletionView.swift */; };
 		A10000000000000000000010 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* SettingsView.swift */; };
+		A10000000000000000000011 /* KegelEducationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* KegelEducationView.swift */; };
 		A10000000000000000000012 /* AdsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* AdsManager.swift */; };
 		A10000000000000000000013 /* AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* AdBannerView.swift */; };
+		A10000000000000000000014 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* StoreManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		313A5A432F6F0DDD006D6235 /* KegelTimer.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = KegelTimer.storekit; path = KegelTimer/Store/KegelTimer.storekit; sourceTree = "<group>"; };
 		314F8F052F66F73F00F822FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000000 /* KegelTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KegelTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -38,13 +41,15 @@
 		A20000000000000000000007 /* CueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueManager.swift; sourceTree = "<group>"; };
 		A20000000000000000000008 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		A20000000000000000000011 /* KegelEducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KegelEducationView.swift; sourceTree = "<group>"; };
 		A2000000000000000000000D /* Tokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokens.swift; sourceTree = "<group>"; };
 		A2000000000000000000000E /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
 		A2000000000000000000000F /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionView.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A20000000000000000000011 /* KegelEducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KegelEducationView.swift; sourceTree = "<group>"; };
 		A20000000000000000000012 /* AdsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsManager.swift; sourceTree = "<group>"; };
 		A20000000000000000000013 /* AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerView.swift; sourceTree = "<group>"; };
+		A20000000000000000000014 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
+		A20000000000000000000015 /* KegelTimer.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = KegelTimer.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +67,7 @@
 		A40000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				313A5A432F6F0DDD006D6235 /* KegelTimer.storekit */,
 				314F8F052F66F73F00F822FD /* Assets.xcassets */,
 				A40000000000000000000002 /* KegelTimer */,
 				A40000000000000000000003 /* Products */,
@@ -76,6 +82,7 @@
 				A40000000000000000000005 /* Core */,
 				A40000000000000000000006 /* Features */,
 				A40000000000000000000007 /* Design */,
+				A40000000000000000000012 /* Store */,
 			);
 			path = KegelTimer;
 			sourceTree = "<group>";
@@ -163,6 +170,15 @@
 			path = Ads;
 			sourceTree = "<group>";
 		};
+		A40000000000000000000012 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000014 /* StoreManager.swift */,
+				A20000000000000000000015 /* KegelTimer.storekit */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -226,6 +242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				313A5A442F6F0DDD006D6235 /* KegelTimer.storekit in Resources */,
 				314F8F062F66F73F00F822FD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -242,6 +259,7 @@
 				A10000000000000000000004 /* RootView.swift in Sources */,
 				A10000000000000000000012 /* AdsManager.swift in Sources */,
 				A10000000000000000000013 /* AdBannerView.swift in Sources */,
+				A10000000000000000000014 /* StoreManager.swift in Sources */,
 				A10000000000000000000005 /* Models.swift in Sources */,
 				A10000000000000000000006 /* SessionEngine.swift in Sources */,
 				A10000000000000000000007 /* CueManager.swift in Sources */,
@@ -256,25 +274,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		314F8F092F66F73F00F822FD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.14.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		314F8F082F66F73F00F822FD /* GoogleMobileAds */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 314F8F092F66F73F00F822FD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
-			productName = GoogleMobileAds;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A80000000000000000000001 /* Debug */ = {
@@ -414,6 +413,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		314F8F092F66F73F00F822FD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.14.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		314F8F082F66F73F00F822FD /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 314F8F092F66F73F00F822FD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A60000000000000000000001 /* Project object */;
 }
