@@ -33,8 +33,13 @@ struct RootView: View {
     private func topControls(topInset: CGFloat) -> some View {
         VStack(alignment: .trailing, spacing: 10) {
             HStack(spacing: 12) {
-                iconButton(systemName: "gearshape.fill") {
-                    isSettingsPresented = true
+                if !appModel.isStartCountdownActive {
+                    iconButton(systemName: "gearshape.fill") {
+                        if sessionEngine.state?.status == .running {
+                            sessionEngine.pause(settings: appModel.settings)
+                        }
+                        isSettingsPresented = true
+                    }
                 }
 
                 if appModel.isStartCountdownActive {
