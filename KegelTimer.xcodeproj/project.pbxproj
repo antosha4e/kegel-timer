@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		314F8F062F66F73F00F822FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 314F8F052F66F73F00F822FD /* Assets.xcassets */; };
+		314F8F072F66F73F00F822FD /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 314F8F082F66F73F00F822FD /* GoogleMobileAds */; };
 		A10000000000000000000002 /* KegelTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* KegelTimerApp.swift */; };
 		A10000000000000000000003 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* AppModel.swift */; };
 		A10000000000000000000004 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* RootView.swift */; };
@@ -21,11 +22,14 @@
 		A1000000000000000000000E /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* SessionView.swift */; };
 		A1000000000000000000000F /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* CompletionView.swift */; };
 		A10000000000000000000010 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* SettingsView.swift */; };
+		A10000000000000000000012 /* AdsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* AdsManager.swift */; };
+		A10000000000000000000013 /* AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* AdBannerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		314F8F052F66F73F00F822FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000000 /* KegelTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KegelTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000002 /* KegelTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KegelTimerApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000003 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		A20000000000000000000004 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -39,6 +43,8 @@
 		A2000000000000000000000E /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
 		A2000000000000000000000F /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionView.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A20000000000000000000012 /* AdsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsManager.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				314F8F072F66F73F00F822FD /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				A40000000000000000000004 /* App */,
+				A40000000000000000000011 /* Ads */,
 				A40000000000000000000005 /* Core */,
 				A40000000000000000000006 /* Features */,
 				A40000000000000000000007 /* Design */,
@@ -83,6 +91,7 @@
 		A40000000000000000000004 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				A20000000000000000000001 /* Info.plist */,
 				A20000000000000000000002 /* KegelTimerApp.swift */,
 				A20000000000000000000003 /* AppModel.swift */,
 				A20000000000000000000004 /* RootView.swift */,
@@ -145,6 +154,15 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		A40000000000000000000011 /* Ads */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000012 /* AdsManager.swift */,
+				A20000000000000000000013 /* AdBannerView.swift */,
+			);
+			path = Ads;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -161,6 +179,9 @@
 			dependencies = (
 			);
 			name = KegelTimer;
+			packageProductDependencies = (
+				314F8F082F66F73F00F822FD /* GoogleMobileAds */,
+			);
 			productName = KegelTimer;
 			productReference = A20000000000000000000000 /* KegelTimer.app */;
 			productType = "com.apple.product-type.application";
@@ -188,6 +209,9 @@
 				Base,
 			);
 			mainGroup = A40000000000000000000001;
+			packageReferences = (
+				314F8F092F66F73F00F822FD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			productRefGroup = A40000000000000000000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -216,6 +240,8 @@
 				A10000000000000000000002 /* KegelTimerApp.swift in Sources */,
 				A10000000000000000000003 /* AppModel.swift in Sources */,
 				A10000000000000000000004 /* RootView.swift in Sources */,
+				A10000000000000000000012 /* AdsManager.swift in Sources */,
+				A10000000000000000000013 /* AdBannerView.swift in Sources */,
 				A10000000000000000000005 /* Models.swift in Sources */,
 				A10000000000000000000006 /* SessionEngine.swift in Sources */,
 				A10000000000000000000007 /* CueManager.swift in Sources */,
@@ -230,6 +256,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		314F8F092F66F73F00F822FD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.14.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		314F8F082F66F73F00F822FD /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 314F8F092F66F73F00F822FD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A80000000000000000000001 /* Debug */ = {
@@ -308,12 +353,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YMU64U3WR8;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Kegel Timer";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KegelTimer/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -335,12 +376,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YMU64U3WR8;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Kegel Timer";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KegelTimer/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -24,7 +24,7 @@ struct CompletionView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .safeAreaInset(edge: .bottom) {
-            continueDock
+            bottomDock
         }
         .preferredColorScheme(.dark)
     }
@@ -104,34 +104,41 @@ struct CompletionView: View {
                 .frame(width: 124, height: 124)
                 .rotationEffect(.degrees(130))
 
-            Text("1/1")
+            Text("\(completedStages)/\(totalStages)")
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
                 .monospacedDigit()
         }
     }
 
-    private var continueDock: some View {
-        HStack {
-            Spacer(minLength: 0)
-            Button {
-                appModel.finishCompletedSession()
-            } label: {
-                Text("Continue")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
-                    .background(
-                        RoundedRectangle(cornerRadius: 30, style: .continuous)
-                            .fill(AppTheme.squeezeGradient)
-                    )
+    private var bottomDock: some View {
+        VStack(spacing: 12) {
+            if appModel.shouldShowCompletionBanner {
+                CompletionBannerAdView(adUnitID: appModel.completionBannerAdUnitID)
+                    .padding(.horizontal, 30)
             }
-            .buttonStyle(.plain)
-            .frame(maxWidth: 520)
-            Spacer(minLength: 0)
+
+            HStack {
+                Spacer(minLength: 0)
+                Button {
+                    appModel.finishCompletedSession()
+                } label: {
+                    Text("Continue")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 24)
+                        .background(
+                            RoundedRectangle(cornerRadius: 30, style: .continuous)
+                                .fill(AppTheme.squeezeGradient)
+                        )
+                }
+                .buttonStyle(.plain)
+                .frame(maxWidth: 520)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 30)
         }
-        .padding(.horizontal, 30)
         .padding(.top, 12)
         .padding(.bottom, 16)
     }

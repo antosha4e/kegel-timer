@@ -7,6 +7,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var startCountdownRemaining: TimeInterval?
 
     let sessionEngine: SessionEngine
+    let adsManager: AdsManager
 
     private let storage: AppStorage
     private let cueManager: CueManager
@@ -16,10 +17,12 @@ final class AppModel: ObservableObject {
 
     init(
         storage: AppStorage = AppStorage(),
-        cueManager: CueManager = CueManager()
+        cueManager: CueManager = CueManager(),
+        adsManager: AdsManager? = nil
     ) {
         self.storage = storage
         self.cueManager = cueManager
+        self.adsManager = adsManager ?? AdsManager()
         self.settings = storage.loadSettings()
         self.sessionEngine = SessionEngine(cueManager: cueManager)
 
@@ -42,6 +45,7 @@ final class AppModel: ObservableObject {
     func restore() {
         guard !hasRestored else { return }
         hasRestored = true
+        adsManager.startIfNeeded()
         storage.saveActiveSnapshot(nil)
         sessionEngine.restore(from: nil, settings: settings)
         applyIdleTimerPolicy()
@@ -133,6 +137,18 @@ final class AppModel: ObservableObject {
     func setDifficulty(_ difficulty: WorkoutDifficulty) {
         settings.difficulty = difficulty
         persistSettings()
+    }
+
+    var hasRemovedAds: Bool {
+        settings.hasRemovedAds
+    }
+
+    var shouldShowCompletionBanner: Bool {
+        settings.adsEnabled && !settings.hasRemovedAds && sessionEngine.state?.status == .completed
+    }
+
+    var completionBannerAdUnitID: String {
+        adsManager.completionBannerAdUnitID
     }
 
     func skipToNextStage() {

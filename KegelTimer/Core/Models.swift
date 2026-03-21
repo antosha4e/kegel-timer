@@ -313,12 +313,55 @@ struct AppSettings: Codable, Equatable {
     var keepScreenAwake: Bool
     var startCountdownDuration: Int
     var difficulty: WorkoutDifficulty
+    var adsEnabled: Bool
+    var hasRemovedAds: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case soundEnabled
+        case hapticsEnabled
+        case keepScreenAwake
+        case startCountdownDuration
+        case difficulty
+        case adsEnabled
+        case hasRemovedAds
+    }
+
+    init(
+        soundEnabled: Bool,
+        hapticsEnabled: Bool,
+        keepScreenAwake: Bool,
+        startCountdownDuration: Int,
+        difficulty: WorkoutDifficulty,
+        adsEnabled: Bool,
+        hasRemovedAds: Bool
+    ) {
+        self.soundEnabled = soundEnabled
+        self.hapticsEnabled = hapticsEnabled
+        self.keepScreenAwake = keepScreenAwake
+        self.startCountdownDuration = startCountdownDuration
+        self.difficulty = difficulty
+        self.adsEnabled = adsEnabled
+        self.hasRemovedAds = hasRemovedAds
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        soundEnabled = try container.decodeIfPresent(Bool.self, forKey: .soundEnabled) ?? true
+        hapticsEnabled = try container.decodeIfPresent(Bool.self, forKey: .hapticsEnabled) ?? true
+        keepScreenAwake = try container.decodeIfPresent(Bool.self, forKey: .keepScreenAwake) ?? true
+        startCountdownDuration = try container.decodeIfPresent(Int.self, forKey: .startCountdownDuration) ?? 3
+        difficulty = try container.decodeIfPresent(WorkoutDifficulty.self, forKey: .difficulty) ?? .intermediate
+        adsEnabled = try container.decodeIfPresent(Bool.self, forKey: .adsEnabled) ?? true
+        hasRemovedAds = try container.decodeIfPresent(Bool.self, forKey: .hasRemovedAds) ?? false
+    }
 
     static let `default` = AppSettings(
         soundEnabled: true,
         hapticsEnabled: true,
         keepScreenAwake: true,
         startCountdownDuration: 3,
-        difficulty: .intermediate
+        difficulty: .intermediate,
+        adsEnabled: true,
+        hasRemovedAds: false
     )
 }

@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var appModel: AppModel
+    @State private var isRemoveAdsNoticePresented = false
 
     private let countdownOptions = [0, 3, 5]
 
@@ -83,6 +84,53 @@ struct SettingsView: View {
                             .pickerStyle(.segmented)
                         }
                     }
+
+                    settingsCard(title: "Monetization") {
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack(alignment: .top, spacing: 16) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Status")
+                                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(AppTheme.ink)
+
+                                    Text(appModel.hasRemovedAds ? "Ad-free unlocked" : "Ads enabled")
+                                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                                        .foregroundStyle(AppTheme.mutedInk)
+                                }
+
+                                Spacer(minLength: 12)
+
+                                Image(systemName: appModel.hasRemovedAds ? "checkmark.seal.fill" : "megaphone.fill")
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundStyle(appModel.hasRemovedAds ? AppTheme.accent : AppTheme.mutedInk)
+                            }
+
+                            divider
+
+                            Button {
+                                isRemoveAdsNoticePresented = true
+                            } label: {
+                                HStack(spacing: 12) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Remove Ads")
+                                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                                            .foregroundStyle(AppTheme.ink)
+
+                                        Text("One-time purchase placeholder. StoreKit is not wired yet.")
+                                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                                            .foregroundStyle(AppTheme.mutedInk)
+                                    }
+
+                                    Spacer(minLength: 12)
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundStyle(AppTheme.mutedInk)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 18)
@@ -99,6 +147,11 @@ struct SettingsView: View {
             }
         }
         .preferredColorScheme(.dark)
+        .alert("Remove Ads Not Available Yet", isPresented: $isRemoveAdsNoticePresented) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("The ad-free purchase flow is planned, but StoreKit has not been implemented yet.")
+        }
     }
 
     private var startCountdownBinding: Binding<Int> {
