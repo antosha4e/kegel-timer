@@ -18,6 +18,7 @@ final class AppModel: ObservableObject {
     let sessionEngine: SessionEngine
     let adsManager: AdsManager
     let storeManager: StoreManager
+    let reminderManager: ReminderManager
 
     private let storage: AppStorage
     private let cueManager: CueManager
@@ -29,12 +30,14 @@ final class AppModel: ObservableObject {
         storage: AppStorage = AppStorage(),
         cueManager: CueManager = CueManager(),
         adsManager: AdsManager? = nil,
-        storeManager: StoreManager? = nil
+        storeManager: StoreManager? = nil,
+        reminderManager: ReminderManager = ReminderManager()
     ) {
         self.storage = storage
         self.cueManager = cueManager
         self.adsManager = adsManager ?? AdsManager()
         self.storeManager = storeManager ?? StoreManager()
+        self.reminderManager = reminderManager
         self.settings = storage.loadSettings()
         self.sessionEngine = SessionEngine(cueManager: cueManager)
 
@@ -69,6 +72,7 @@ final class AppModel: ObservableObject {
         storage.saveActiveSnapshot(nil)
         sessionEngine.restore(from: nil, settings: settings)
         applyIdleTimerPolicy()
+        syncReminders()
     }
 
     func startSession() {
@@ -157,6 +161,37 @@ final class AppModel: ObservableObject {
     func setDifficulty(_ difficulty: WorkoutDifficulty) {
         settings.difficulty = difficulty
         persistSettings()
+    }
+
+    func addReminderSchedule(_ schedule: ReminderSchedule) {
+        settings.reminderSchedules.append(schedule)
+        settings.reminderSchedules.sort { lhs, rhs in
+            if lhs.hour == rhs.hour {
+                return lhs.minute < rhs.minute
+            }
+            return lhs.hour < rhs.hour
+        }
+        persistSettings()
+        syncReminders()
+    }
+
+    func updateReminderSchedule(_ schedule: ReminderSchedule) {
+        guard let index = settings.reminderSchedules.firstIndex(where: { $0.id == schedule.id }) else { return }
+        settings.reminderSchedules[index] = schedule
+        settings.reminderSchedules.sort { lhs, rhs in
+            if lhs.hour == rhs.hour {
+                return lhs.minute < rhs.minute
+            }
+            return lhs.hour < rhs.hour
+        }
+        persistSettings()
+        syncReminders()
+    }
+
+    func removeReminderSchedule(id: UUID) {
+        settings.reminderSchedules.removeAll { $0.id == id }
+        persistSettings()
+        syncReminders()
     }
 
     var hasRemovedAds: Bool {
@@ -268,5 +303,24 @@ final class AppModel: ObservableObject {
     private func applyIdleTimerPolicy() {
         let allowIdlePrevention = settings.keepScreenAwake && sessionEngine.isActivelyRunning
         UIApplication.shared.isIdleTimerDisabled = allowIdlePrevention
+    }
+
+    private func syncReminders() {
+        let schedules = settings.reminderSchedules
+
+        Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                _ = try await reminderManager.syncSchedules(schedules)
+            } catch {
+                if !schedules.filter(\.isEnabled).isEmpty {
+                    alert = AppAlert(
+                        title: "Reminders Unavailable",
+                        message: error.localizedDescription
+                    )
+                }
+            }
+        }
     }
 }

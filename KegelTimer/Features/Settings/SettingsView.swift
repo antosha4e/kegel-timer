@@ -19,7 +19,7 @@ struct SettingsView: View {
                                 .font(.system(size: 18, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppTheme.ink)
 
-                            Text("Choose the default session intensity for new workouts.")
+                            Text("Choose the default intensity for new sessions.")
                                 .font(.system(size: 14, weight: .medium, design: .rounded))
                                 .foregroundStyle(AppTheme.mutedInk)
 
@@ -82,6 +82,35 @@ struct SettingsView: View {
                             }
                             .pickerStyle(.segmented)
                         }
+                    }
+
+                    settingsCard(title: "Reminders") {
+                        NavigationLink {
+                            RemindersView(showsCloseButton: false)
+                        } label: {
+                            HStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Sessions Reminders")
+                                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(AppTheme.ink)
+
+                                    Text(reminderSummary)
+                                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                                        .foregroundStyle(AppTheme.mutedInk)
+                                }
+
+                                Spacer(minLength: 12)
+
+                                Image(systemName: "bell.badge.fill")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundStyle(hasEnabledReminders ? AppTheme.accent : AppTheme.mutedInk)
+
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(AppTheme.mutedInk)
+                            }
+                        }
+                        .buttonStyle(.plain)
                     }
 
                     settingsCard(title: "Monetization") {
@@ -203,6 +232,24 @@ struct SettingsView: View {
             get: { appModel.settings.startCountdownDuration },
             set: appModel.setStartCountdownDuration
         )
+    }
+
+    private var hasEnabledReminders: Bool {
+        appModel.settings.reminderSchedules.contains { $0.isEnabled }
+    }
+
+    private var reminderSummary: String {
+        let scheduleCount = appModel.settings.reminderSchedules.count
+
+        guard scheduleCount > 0 else {
+            return "Set a recurring workout schedule."
+        }
+
+        if hasEnabledReminders {
+            return scheduleCount == 1 ? "1 schedule active" : "\(scheduleCount) schedules saved"
+        }
+
+        return scheduleCount == 1 ? "1 schedule saved but turned off" : "\(scheduleCount) schedules saved but turned off"
     }
 
     private var divider: some View {

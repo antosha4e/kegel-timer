@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var appModel: AppModel
     @State private var isEducationPresented = false
+    @State private var isRemindersPresented = false
 
     var body: some View {
         ZStack {
@@ -28,6 +29,30 @@ struct HomeView: View {
                             .font(.system(size: 15, weight: .semibold))
 
                         Text("What is Kegel?")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 12)
+                    .background(
+                        Capsule()
+                            .fill(.white.opacity(0.09))
+                    )
+                    .overlay(
+                        Capsule()
+                            .stroke(.white.opacity(0.08), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    isRemindersPresented = true
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "bell.badge")
+                            .font(.system(size: 15, weight: .semibold))
+
+                        Text("Set reminders")
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                     }
                     .foregroundStyle(.white)
@@ -95,6 +120,9 @@ struct HomeView: View {
         .sheet(isPresented: $isEducationPresented) {
             KegelEducationView()
                 .presentationDragIndicator(.visible)
+        }
+        .fullScreenCover(isPresented: $isRemindersPresented) {
+            RemindersView()
         }
     }
 }

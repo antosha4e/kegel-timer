@@ -1,5 +1,102 @@
 import Foundation
 
+enum ReminderWeekday: Int, Codable, CaseIterable, Identifiable, Hashable {
+    case sunday = 1
+    case monday = 2
+    case tuesday = 3
+    case wednesday = 4
+    case thursday = 5
+    case friday = 6
+    case saturday = 7
+
+    var id: Int { rawValue }
+
+    var shortTitle: String {
+        switch self {
+        case .sunday:
+            return "Sun"
+        case .monday:
+            return "Mon"
+        case .tuesday:
+            return "Tue"
+        case .wednesday:
+            return "Wed"
+        case .thursday:
+            return "Thu"
+        case .friday:
+            return "Fri"
+        case .saturday:
+            return "Sat"
+        }
+    }
+}
+
+struct ReminderSchedule: Identifiable, Codable, Equatable, Hashable {
+    let id: UUID
+    var hour: Int
+    var minute: Int
+    var weekdays: [ReminderWeekday]
+    var isEnabled: Bool
+
+    init(
+        id: UUID = UUID(),
+        hour: Int,
+        minute: Int,
+        weekdays: [ReminderWeekday],
+        isEnabled: Bool = true
+    ) {
+        self.id = id
+        self.hour = hour
+        self.minute = minute
+        self.weekdays = weekdays.sorted { $0.rawValue < $1.rawValue }
+        self.isEnabled = isEnabled
+    }
+
+    init(id: UUID = UUID(), time: Date, weekdays: [ReminderWeekday], isEnabled: Bool = true) {
+        let components = Calendar.current.dateComponents([.hour, .minute], from: time)
+        self.init(
+            id: id,
+            hour: components.hour ?? 8,
+            minute: components.minute ?? 0,
+            weekdays: weekdays,
+            isEnabled: isEnabled
+        )
+    }
+
+    var timeDate: Date {
+        Calendar.current.date(
+            bySettingHour: hour,
+            minute: minute,
+            second: 0,
+            of: Date()
+        ) ?? Date()
+    }
+
+    var weekdaySummary: String {
+        let sortedWeekdays = weekdays.sorted { $0.rawValue < $1.rawValue }
+
+        if sortedWeekdays == [.monday, .tuesday, .wednesday, .thursday, .friday] {
+            return "Weekdays"
+        }
+
+        if sortedWeekdays == [.sunday, .saturday] {
+            return "Weekends"
+        }
+
+        if sortedWeekdays.count == ReminderWeekday.allCases.count {
+            return "Every day"
+        }
+
+        return sortedWeekdays.map(\.shortTitle).joined(separator: ", ")
+    }
+
+    static let suggested = ReminderSchedule(
+        hour: 8,
+        minute: 0,
+        weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday]
+    )
+}
+
 enum SessionPhaseKind: String, Codable, CaseIterable {
     case squeeze
     case relax
@@ -313,6 +410,7 @@ struct AppSettings: Codable, Equatable {
     var keepScreenAwake: Bool
     var startCountdownDuration: Int
     var difficulty: WorkoutDifficulty
+    var reminderSchedules: [ReminderSchedule]
     var adsEnabled: Bool
     var hasRemovedAds: Bool
 
@@ -322,6 +420,7 @@ struct AppSettings: Codable, Equatable {
         case keepScreenAwake
         case startCountdownDuration
         case difficulty
+        case reminderSchedules
         case adsEnabled
         case hasRemovedAds
     }
@@ -332,6 +431,7 @@ struct AppSettings: Codable, Equatable {
         keepScreenAwake: Bool,
         startCountdownDuration: Int,
         difficulty: WorkoutDifficulty,
+        reminderSchedules: [ReminderSchedule],
         adsEnabled: Bool,
         hasRemovedAds: Bool
     ) {
@@ -340,6 +440,7 @@ struct AppSettings: Codable, Equatable {
         self.keepScreenAwake = keepScreenAwake
         self.startCountdownDuration = startCountdownDuration
         self.difficulty = difficulty
+        self.reminderSchedules = reminderSchedules
         self.adsEnabled = adsEnabled
         self.hasRemovedAds = hasRemovedAds
     }
@@ -351,6 +452,7 @@ struct AppSettings: Codable, Equatable {
         keepScreenAwake = try container.decodeIfPresent(Bool.self, forKey: .keepScreenAwake) ?? true
         startCountdownDuration = try container.decodeIfPresent(Int.self, forKey: .startCountdownDuration) ?? 3
         difficulty = try container.decodeIfPresent(WorkoutDifficulty.self, forKey: .difficulty) ?? .intermediate
+        reminderSchedules = try container.decodeIfPresent([ReminderSchedule].self, forKey: .reminderSchedules) ?? []
         adsEnabled = try container.decodeIfPresent(Bool.self, forKey: .adsEnabled) ?? true
         hasRemovedAds = try container.decodeIfPresent(Bool.self, forKey: .hasRemovedAds) ?? false
     }
@@ -361,6 +463,7 @@ struct AppSettings: Codable, Equatable {
         keepScreenAwake: true,
         startCountdownDuration: 3,
         difficulty: .intermediate,
+        reminderSchedules: [],
         adsEnabled: true,
         hasRemovedAds: false
     )
