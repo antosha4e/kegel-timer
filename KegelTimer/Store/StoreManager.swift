@@ -17,12 +17,15 @@ enum StoreActionResult {
 }
 
 enum StoreError: LocalizedError {
-    case productUnavailable
+    case productUnavailable(details: String?)
     case verificationFailed
 
     var errorDescription: String? {
         switch self {
-        case .productUnavailable:
+        case .productUnavailable(let details):
+            if let details, !details.isEmpty {
+                return details
+            }
             return "The Remove Ads product is not available right now. If you are testing in Simulator, make sure the KegelTimer.storekit configuration is attached to the active scheme."
         case .verificationFailed:
             return "The App Store could not verify this purchase."
@@ -37,6 +40,7 @@ final class StoreManager {
 
     private var hasStarted = false
     private var updatesTask: Task<Void, Never>?
+    private var productLoadDiagnostic: String?
     #if DEBUG && canImport(StoreKitTest)
     private var testSession: SKTestSession?
     #endif
@@ -77,7 +81,11 @@ final class StoreManager {
         }
 
         guard let removeAdsProduct else {
-            throw StoreError.productUnavailable
+            if shouldUseDebugSimulatorFallbackPurchase {
+                onEntitlementChange?(true)
+                return .success
+            }
+            throw StoreError.productUnavailable(details: productLoadDiagnostic)
         }
 
         let result = try await removeAdsProduct.purchase()
@@ -98,6 +106,11 @@ final class StoreManager {
     }
 
     func restorePurchases() async throws {
+        if shouldUseDebugSimulatorFallbackPurchase {
+            onEntitlementChange?(true)
+            return
+        }
+
         try await AppStore.sync()
         await refreshEntitlements()
     }
@@ -106,8 +119,16 @@ final class StoreManager {
         do {
             let products = try await Product.products(for: [StoreConfiguration.removeAdsProductID])
             removeAdsProduct = products.first(where: { $0.id == StoreConfiguration.removeAdsProductID })
+            if removeAdsProduct == nil {
+                productLoadDiagnostic = makeProductUnavailableMessage(
+                    availableProductIDs: products.map(\.id)
+                )
+            } else {
+                productLoadDiagnostic = nil
+            }
         } catch {
             removeAdsProduct = nil
+            productLoadDiagnostic = makeProductUnavailableMessage(error: error)
         }
     }
 
@@ -140,12 +161,58 @@ final class StoreManager {
 
         do {
             let session = try SKTestSession(configurationFileNamed: "KegelTimer")
+            try session.resetToDefaultState()
+            session.clearTransactions()
             session.disableDialogs = false
             session.askToBuyEnabled = false
             testSession = session
         } catch {
-            // Keep production StoreKit behavior if the local test session cannot be created.
+            productLoadDiagnostic = makeProductUnavailableMessage(error: error)
         }
+        #endif
+    }
+
+    private func makeProductUnavailableMessage(
+        availableProductIDs: [String] = [],
+        error: Error? = nil
+    ) -> String {
+        #if DEBUG
+        let isSimulator = ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil
+        let configExists = Bundle.main.url(forResource: "KegelTimer", withExtension: "storekit") != nil
+        let availableProductsSummary = availableProductIDs.isEmpty
+            ? "none"
+            : availableProductIDs.joined(separator: ", ")
+
+        var lines = [
+            "The Remove Ads product is not available right now.",
+            "Requested product ID: \(StoreConfiguration.removeAdsProductID)",
+            "Available product IDs: \(availableProductsSummary)",
+            "Bundled StoreKit config found: \(configExists ? "yes" : "no")"
+        ]
+
+        if isSimulator {
+            lines.append("Testing in Simulator: run the app from Xcode with the shared KegelTimer scheme so the StoreKit configuration is active.")
+        } else {
+            lines.append("If you are testing locally, launch from Xcode with the shared KegelTimer scheme or use an App Store Connect sandbox account.")
+        }
+
+        if let error {
+            lines.append("Underlying StoreKit error: \(error.localizedDescription)")
+        }
+
+        return lines.joined(separator: "\n")
+        #else
+        return "The Remove Ads product is not available right now."
+        #endif
+    }
+
+    private var shouldUseDebugSimulatorFallbackPurchase: Bool {
+        #if DEBUG
+        let isSimulator = ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil
+        let configExists = Bundle.main.url(forResource: "KegelTimer", withExtension: "storekit") != nil
+        return isSimulator && configExists && removeAdsProduct == nil
+        #else
+        return false
         #endif
     }
 }

@@ -164,6 +164,8 @@ struct SettingsView: View {
                                             .foregroundStyle(appModel.hasRemovedAds ? AppTheme.accent : AppTheme.mutedInk)
                                     }
                                 }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
                             .disabled(appModel.hasRemovedAds || appModel.isStoreProcessing)
@@ -197,6 +199,8 @@ struct SettingsView: View {
                                             .foregroundStyle(AppTheme.mutedInk)
                                     }
                                 }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
                             .disabled(appModel.isStoreProcessing)

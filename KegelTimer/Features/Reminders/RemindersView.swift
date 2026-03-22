@@ -36,7 +36,7 @@ struct RemindersView: View {
                         }
                     }
 
-                    Spacer(minLength: 120)
+                    Spacer(minLength: 40)
 
                     tipCard
                 }
@@ -76,7 +76,7 @@ struct RemindersView: View {
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
 
-            Text("Create a schedule & get workout reminders that'll make your training process consistent")
+            Text("Create a schedule & get reminders that'll make your training process consistent")
                 .font(.system(size: 18, weight: .medium, design: .rounded))
                 .foregroundStyle(AppTheme.mutedInk)
                 .multilineTextAlignment(.center)
